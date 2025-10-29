@@ -1,0 +1,10 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page session="true" isELIgnored="true" %>
+<%
+    String loggedInUser = (String) session.getAttribute("loggedInUser");
+    String userRole = (String) session.getAttribute("userRole");
+    Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+    if (loggedInUser == null) loggedInUser = "";
+    if (userRole == null) userRole = "Guest";
+    if (isLoggedIn == null) isLoggedIn = false;
+%>
