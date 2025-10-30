@@ -848,19 +848,31 @@
             font-weight: 600;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 14px;
             transition: all 0.3s ease;
+            background: white;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #1976d2;
             box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
         }
 
         .rep-form-section {
@@ -1193,14 +1205,18 @@
                         managementReps: committee.members
                             .filter(m => m.member_type === 'Management')
                             .map(m => ({
-                                post: m.role,
+                                name: m.employee_name || 'N/A',
+                                post: m.post || m.designation || 'N/A',  // designation from DB
+                                role: m.committee_role || 'Member',       // committee role (Chairman/Secretary/Member)
                                 dept: m.department_name || 'N/A',
                                 eid: m.employee_id.toString()
                             })),
                         workerReps: committee.members
                             .filter(m => m.member_type === 'Working')
                             .map(m => ({
-                                post: m.role,
+                                name: m.employee_name || 'N/A',
+                                post: m.post || m.designation || 'N/A',  // designation from DB
+                                role: m.committee_role || 'Member',       // committee role (Chairman/Secretary/Member)
                                 dept: m.department_name || 'N/A',
                                 eid: m.employee_id.toString()
                             }))
@@ -1335,6 +1351,7 @@
                                     <thead>
                                         <tr>
                                             <th>Name</th>
+                                            <th>Role</th>
                                             <th>Post</th>
                                             <th>Dept</th>
                                             <th>EID</th>
@@ -1345,9 +1362,10 @@
                                             const employee = employeeDatabase[rep.eid] || {};
                                             return `
                                             <tr>
-                                                <td>\${employee.name || 'N/A'}</td>
-                                                <td>\${rep.post || 'N/A'}</td>
-                                                <td>\${rep.dept || 'N/A'}</td>
+                                                <td>\${rep.name || employee.name || 'N/A'}</td>
+                                                <td>\${rep.role || 'N/A'}</td>
+                                                <td>\${rep.post || employee.post || 'N/A'}</td>
+                                                <td>\${rep.dept || employee.dept || 'N/A'}</td>
                                                 <td>\${rep.eid || 'N/A'}</td>
                                             </tr>
                                         `;}).join('')}
@@ -1361,6 +1379,7 @@
                                     <thead>
                                         <tr>
                                             <th>Name</th>
+                                            <th>Role</th>
                                             <th>Post</th>
                                             <th>Dept</th>
                                             <th>EID</th>
@@ -1371,9 +1390,10 @@
                                             const employee = employeeDatabase[rep.eid] || {};
                                             return `
                                             <tr>
-                                                <td>\${employee.name || 'N/A'}</td>
-                                                <td>\${rep.post || 'N/A'}</td>
-                                                <td>\${rep.dept || 'N/A'}</td>
+                                                <td>\${rep.name || employee.name || 'N/A'}</td>
+                                                <td>\${rep.role || 'N/A'}</td>
+                                                <td>\${rep.post || employee.post || 'N/A'}</td>
+                                                <td>\${rep.dept || employee.dept || 'N/A'}</td>
                                                 <td>\${rep.eid || 'N/A'}</td>
                                             </tr>
                                         `;}).join('')}
@@ -1432,6 +1452,7 @@
                                 <thead>
                                     <tr>
                                         <th>Name</th>
+                                        <th>Role</th>
                                         <th>Post</th>
                                         <th>Dept</th>
                                         <th>EID</th>
@@ -1442,9 +1463,10 @@
                                         const employee = employeeDatabase[rep.eid] || {};
                                         return `
                                         <tr>
-                                            <td>\${employee.name || 'N/A'}</td>
-                                            <td>\${rep.post}</td>
-                                            <td>\${rep.dept}</td>
+                                            <td>\${rep.name || employee.name || 'N/A'}</td>
+                                            <td>\${rep.role || 'N/A'}</td>
+                                            <td>\${rep.post || employee.post || 'N/A'}</td>
+                                            <td>\${rep.dept || employee.dept || 'N/A'}</td>
                                             <td>\${rep.eid}</td>
                                         </tr>
                                     `;}).join('')}
@@ -1458,6 +1480,7 @@
                                 <thead>
                                     <tr>
                                         <th>Name</th>
+                                        <th>Role</th>
                                         <th>Post</th>
                                         <th>Dept</th>
                                         <th>EID</th>
@@ -1468,9 +1491,10 @@
                                         const employee = employeeDatabase[rep.eid] || {};
                                         return `
                                         <tr>
-                                            <td>\${employee.name || 'N/A'}</td>
-                                            <td>\${rep.post}</td>
-                                            <td>\${rep.dept}</td>
+                                            <td>\${rep.name || employee.name || 'N/A'}</td>
+                                            <td>\${rep.role || 'N/A'}</td>
+                                            <td>\${rep.post || employee.post || 'N/A'}</td>
+                                            <td>\${rep.dept || employee.dept || 'N/A'}</td>
                                             <td>\${rep.eid}</td>
                                         </tr>
                                     `;}).join('')}
@@ -1567,6 +1591,15 @@
                         <label>Department</label>
                         <input type="text" class="\${type}-dept" data-index="\${counter}" readonly style="background: #f0f0f0;">
                     </div>
+                    <div class="form-group">
+                        <label>Role *</label>
+                        <select class="\${type}-role" data-index="\${counter}" required>
+                            <option value="">Select Role</option>
+                            <option value="Chairman">Chairman</option>
+                            <option value="Secretary">Secretary</option>
+                            <option value="Member">Member</option>
+                        </select>
+                    </div>
                 </div>
             `;
             
@@ -1648,17 +1681,17 @@
             try {
                 if (currentEditingIndex === -1) {
                     // Create new committee via API
-                    // Map management reps to committee roles: 1st=Chairman, 2nd=Secretary, rest=Member
-                    const managementMembers = committeeData.managementReps.map((rep, index) => ({
+                    // Use the role selected by admin from dropdown
+                    const managementMembers = committeeData.managementReps.map(rep => ({
                         employee_id: rep.eid,
-                        role: index === 0 ? 'Chairman' : index === 1 ? 'Secretary' : 'Member',
+                        role: rep.role, // Use admin-selected role
                         member_type: 'Management'
                     }));
                     
-                    // All worker reps are Members
+                    // Use the role selected by admin from dropdown
                     const workerMembers = committeeData.workerReps.map(rep => ({
                         employee_id: rep.eid,
-                        role: 'Member',
+                        role: rep.role, // Use admin-selected role
                         member_type: 'Working'
                     }));
                     
@@ -1716,6 +1749,26 @@
                 return false;
             }
 
+            // Validate that all representatives have roles assigned
+            let missingRoles = false;
+            managementReps.forEach(item => {
+                const role = item.querySelector('.management-role').value;
+                if (!role) {
+                    missingRoles = true;
+                }
+            });
+            workerReps.forEach(item => {
+                const role = item.querySelector('.worker-role').value;
+                if (!role) {
+                    missingRoles = true;
+                }
+            });
+
+            if (missingRoles) {
+                alert('Please assign roles to all representatives!');
+                return false;
+            }
+
             return true;
         }
 
@@ -1727,8 +1780,9 @@
                 const name = item.querySelector('.management-name').value.trim();
                 const post = item.querySelector('.management-post').value.trim();
                 const dept = item.querySelector('.management-dept').value.trim();
-                if (eid && name && post && dept) {
-                    managementReps.push({ name, post, dept, eid });
+                const role = item.querySelector('.management-role').value;
+                if (eid && name && post && dept && role) {
+                    managementReps.push({ name, post, dept, eid, role });
                 }
             });
 
@@ -1739,8 +1793,9 @@
                 const name = item.querySelector('.worker-name').value.trim();
                 const post = item.querySelector('.worker-post').value.trim();
                 const dept = item.querySelector('.worker-dept').value.trim();
-                if (eid && name && post && dept) {
-                    workerReps.push({ name, post, dept, eid });
+                const role = item.querySelector('.worker-role').value;
+                if (eid && name && post && dept && role) {
+                    workerReps.push({ name, post, dept, eid, role });
                 }
             });
 

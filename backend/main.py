@@ -99,12 +99,17 @@ def create_committee(data: CommitteeCreateInput):
         )
         committee_id = cursor.lastrowid  # get auto-generated committee_id
 
-        # Insert committee members
+        # Insert committee members with committee_role and post (designation)
         for idx, member in enumerate(data.members, start=1):
+            # Fetch employee designation from employees table
+            cursor.execute("SELECT designation FROM employees WHERE employee_id = ?", (member.employee_id,))
+            employee = cursor.fetchone()
+            post = employee['designation'] if employee else None
+            
             cursor.execute("""
-                INSERT INTO committee_member (committee_member_id, committee_id, employee_id, role, member_type)
-                VALUES (?, ?, ?, ?, ?)
-            """, (None, committee_id, member.employee_id, member.role, member.member_type))
+                INSERT INTO committee_member (committee_member_id, committee_id, employee_id, committee_role, post, member_type)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (None, committee_id, member.employee_id, member.role, post, member.member_type))
 
         conn.commit()
         return {"message": "Committee created successfully", "committee_id": committee_id}
@@ -128,9 +133,9 @@ def get_committees():
     for committee in committees:
         committee_dict = dict(committee)
 
-        # Fetch members for this committee with employee_id included
+        # Fetch members for this committee with employee_id, committee_role, and post included
         cursor.execute("""
-            SELECT cm.employee_id, cm.role, cm.member_type, e.employee_name, e.designation, e.department_name
+            SELECT cm.employee_id, cm.committee_role, cm.post, cm.member_type, e.employee_name, e.designation, e.department_name
             FROM committee_member cm
             JOIN employees e ON cm.employee_id = e.employee_id
             WHERE cm.committee_id = ?
