@@ -254,6 +254,18 @@
             </div>
         <% } %>
 
+        <% if ("backend".equals(errorMsg)) { %>
+            <div class="error-message" style="display: block;">
+                Cannot connect to backend server. Please ensure the backend is running.
+            </div>
+        <% } %>
+
+        <% if ("missing".equals(errorMsg)) { %>
+            <div class="error-message" style="display: block;">
+                Please enter both username and password.
+            </div>
+        <% } %>
+
         <div id="errorMessage" class="error-message"></div>
         <div id="successMessage" class="success-message"></div>
 

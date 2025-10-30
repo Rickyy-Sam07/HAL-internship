@@ -1,6 +1,6 @@
-<%%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%%>
-<%%@ page session="true" %%>
-<%%
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page session="true" %>
+<%
     // Check if user is logged in
     String loggedInUser = (String) session.getAttribute("loggedInUser");
     String userRole = (String) session.getAttribute("userRole");
@@ -10,7 +10,7 @@
     if (loggedInUser == null) loggedInUser = "";
     if (userRole == null) userRole = "Guest";
     if (isLoggedIn == null) isLoggedIn = false;
-%%>
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -998,18 +998,18 @@
             </div>
             
             <!-- User Profile Section -->
-            <%% if (isLoggedIn && loggedInUser != null && !loggedInUser.isEmpty()) { %%>
+            <% if (isLoggedIn && loggedInUser != null && !loggedInUser.isEmpty()) { %>
             <div class="user-profile" id="userProfile" style="display: flex;">
-                <div class="user-avatar" id="userAvatar"><%%=loggedInUser.substring(0, 1).toUpperCase()%%></div>
+                <div class="user-avatar" id="userAvatar"><%=loggedInUser.substring(0, 1).toUpperCase()%></div>
                 <div class="user-info">
-                    <span class="user-name" id="userName"><%%=loggedInUser.equals("admin") ? "Administrator" : loggedInUser%%></span>
-                    <span class="user-role"><%%=userRole%%></span>
+                    <span class="user-name" id="userName"><%=loggedInUser.equals("admin") ? "Administrator" : loggedInUser%></span>
+                    <span class="user-role"><%=userRole%></span>
                 </div>
                 <form action="logout.jsp" method="post" style="display: inline;">
                     <button type="submit" class="logout-btn">Logout</button>
                 </form>
             </div>
-            <%% } %%>
+            <% } %>
         </div>
     </div>
 
@@ -1018,8 +1018,11 @@
             <div class="header">
                 <h1>Committee Management Portal</h1>
                 <div class="header-buttons">
-                    <button class="btn btn-login" onclick="redirectToLogin()">Login</button>
-                    <button class="btn btn-add" onclick="handleAddData()">ADD DATA</button>
+                    <% if (!isLoggedIn) { %>
+                        <button class="btn btn-login" onclick="redirectToLogin()">Login</button>
+                    <% } else { %>
+                        <button class="btn btn-add" onclick="handleAddData()">ADD DATA</button>
+                    <% } %>
                 </div>
             </div>
 
@@ -1099,234 +1102,136 @@
     </div>
 
     <script>
-        // Mock data
-        let committees = [
-            {
-                id: "HAL-COM-2024-001",
-                name: "Safety & Health Committee",
-                fromDate: "2024-01-01",
-                tillDate: "2024-12-31",
-                managementReps: [
-                    { post: "General Manager", dept: "Operations", eid: "HAL001" },
-                    { post: "Safety Officer", dept: "Safety & Security", eid: "HAL002" },
-                    { post: "Medical Officer", dept: "Health Services", eid: "HAL003" }
-                ],
-                workerReps: [
-                    { post: "Senior Technician", dept: "Manufacturing", eid: "HAL101" },
-                    { post: "Worker Representative", dept: "Assembly Division", eid: "HAL102" },
-                    { post: "Union Representative", dept: "Maintenance", eid: "HAL103" }
-                ]
-            },
-            {
-                id: "HAL-COM-2024-002",
-                name: "Welfare Committee",
-                fromDate: "2024-01-15",
-                tillDate: "2024-12-31",
-                managementReps: [
-                    { post: "Chief Manager", dept: "Human Resources", eid: "HAL004" },
-                    { post: "Welfare Officer", dept: "Employee Welfare", eid: "HAL005" },
-                    { post: "Finance Manager", dept: "Finance & Accounts", eid: "HAL006" }
-                ],
-                workerReps: [
-                    { post: "Senior Worker", dept: "Fabrication", eid: "HAL104" },
-                    { post: "Worker Representative", dept: "Quality Assurance", eid: "HAL105" },
-                    { post: "Staff Representative", dept: "Administration", eid: "HAL106" }
-                ]
-            },
-            {
-                id: "HAL-COM-2024-003",
-                name: "Training & Development Committee",
-                fromDate: "2024-02-01",
-                tillDate: "2024-12-31",
-                managementReps: [
-                    { post: "Training Manager", dept: "Learning & Development", eid: "HAL007" },
-                    { post: "HOD", dept: "Technical Training", eid: "HAL008" }
-                ],
-                workerReps: [
-                    { post: "Senior Technician", dept: "Engineering", eid: "HAL107" },
-                    { post: "Skill Development Rep", dept: "Production", eid: "HAL108" }
-                ]
-            },
-            {
-                id: "HAL-COM-2024-004",
-                name: "Grievance Redressal Committee",
-                fromDate: "2024-01-01",
-                tillDate: "2024-12-31",
-                managementReps: [
-                    { post: "Deputy General Manager", dept: "Human Resources", eid: "HAL009" },
-                    { post: "Legal Advisor", dept: "Legal & Compliance", eid: "HAL010" },
-                    { post: "Manager", dept: "Industrial Relations", eid: "HAL011" }
-                ],
-                workerReps: [
-                    { post: "Union Secretary", dept: "Workers Union", eid: "HAL109" },
-                    { post: "Worker Representative", dept: "Paint Shop", eid: "HAL110" },
-                    { post: "Staff Representative", dept: "Stores", eid: "HAL111" }
-                ]
-            },
-            {
-                id: "HAL-COM-2024-005",
-                name: "Canteen Management Committee",
-                fromDate: "2024-03-01",
-                tillDate: "2025-02-28",
-                managementReps: [
-                    { post: "Administration Manager", dept: "General Administration", eid: "HAL012" },
-                    { post: "Catering Officer", dept: "Canteen Services", eid: "HAL013" }
-                ],
-                workerReps: [
-                    { post: "Worker Representative", dept: "Machine Shop", eid: "HAL112" },
-                    { post: "Staff Representative", dept: "Design Office", eid: "HAL113" },
-                    { post: "Union Member", dept: "Heat Treatment", eid: "HAL114" }
-                ]
-            },
-            {
-                id: "HAL-COM-2024-006",
-                name: "Works Committee",
-                fromDate: "2024-01-01",
-                tillDate: "2025-12-31",
-                managementReps: [
-                    { post: "General Manager", dept: "Production", eid: "HAL014" },
-                    { post: "Manager", dept: "Industrial Engineering", eid: "HAL015" },
-                    { post: "Manager", dept: "Quality Control", eid: "HAL016" },
-                    { post: "HR Manager", dept: "Personnel", eid: "HAL017" }
-                ],
-                workerReps: [
-                    { post: "Senior Foreman", dept: "Assembly", eid: "HAL115" },
-                    { post: "Union President", dept: "Workers Union", eid: "HAL116" },
-                    { post: "Worker Representative", dept: "Tooling", eid: "HAL117" },
-                    { post: "Worker Representative", dept: "Testing", eid: "HAL118" }
-                ]
-            },
-            {
-                id: "HAL-COM-2024-007",
-                name: "Environment & Pollution Control Committee",
-                fromDate: "2024-01-10",
-                tillDate: "2024-12-31",
-                managementReps: [
-                    { post: "Senior Manager", dept: "Environment Management", eid: "HAL018" },
-                    { post: "Environmental Engineer", dept: "EHS Department", eid: "HAL019" },
-                    { post: "Compliance Officer", dept: "Regulatory Affairs", eid: "HAL020" }
-                ],
-                workerReps: [
-                    { post: "Safety Representative", dept: "Electroplating", eid: "HAL119" },
-                    { post: "Worker Representative", dept: "Chemical Processing", eid: "HAL120" }
-                ]
-            },
-            {
-                id: "HAL-COM-2024-008",
-                name: "Sports & Recreation Committee",
-                fromDate: "2024-04-01",
-                tillDate: "2025-03-31",
-                managementReps: [
-                    { post: "Welfare Officer", dept: "Employee Welfare", eid: "HAL021" },
-                    { post: "Sports Coordinator", dept: "Recreation Services", eid: "HAL022" }
-                ],
-                workerReps: [
-                    { post: "Sports Representative", dept: "Foundry", eid: "HAL121" },
-                    { post: "Worker Representative", dept: "Inspection", eid: "HAL122" },
-                    { post: "Staff Representative", dept: "IT Department", eid: "HAL123" }
-                ]
-            },
-            {
-                id: "HAL-COM-2024-009",
-                name: "Internal Complaints Committee (ICC)",
-                fromDate: "2024-01-01",
-                tillDate: "2026-12-31",
-                managementReps: [
-                    { post: "Presiding Officer", dept: "Human Resources", eid: "HAL023" },
-                    { post: "Senior Manager", dept: "Administration", eid: "HAL024" },
-                    { post: "Legal Consultant", dept: "Legal Department", eid: "HAL025" }
-                ],
-                workerReps: [
-                    { post: "Women Representative", dept: "Engineering Services", eid: "HAL124" },
-                    { post: "Staff Representative", dept: "Procurement", eid: "HAL125" }
-                ]
-            },
-            {
-                id: "HAL-COM-2024-010",
-                name: "Productivity & Quality Improvement Committee",
-                fromDate: "2024-02-15",
-                tillDate: "2025-02-14",
-                managementReps: [
-                    { post: "Chief Manager", dept: "Quality Assurance", eid: "HAL026" },
-                    { post: "Production Manager", dept: "Manufacturing", eid: "HAL027" },
-                    { post: "Process Engineer", dept: "Industrial Engineering", eid: "HAL028" }
-                ],
-                workerReps: [
-                    { post: "Kaizen Representative", dept: "Sheet Metal", eid: "HAL126" },
-                    { post: "Quality Circle Leader", dept: "Avionics", eid: "HAL127" },
-                    { post: "Worker Representative", dept: "Composite Materials", eid: "HAL128" }
-                ]
-            }
-        ];
-
-        // Employee Database - Mock data for EID lookup
-        const employeeDatabase = {
-            // Management Employees
-            "HAL001": { name: "Rajesh Kumar", post: "General Manager", dept: "Operations" },
-            "HAL002": { name: "Anita Sharma", post: "Safety Officer", dept: "Safety & Security" },
-            "HAL003": { name: "Dr. Suresh Patel", post: "Medical Officer", dept: "Health Services" },
-            "HAL004": { name: "Vijay Singh", post: "Chief Manager", dept: "Human Resources" },
-            "HAL005": { name: "Priya Desai", post: "Welfare Officer", dept: "Employee Welfare" },
-            "HAL006": { name: "Amit Verma", post: "Finance Manager", dept: "Finance & Accounts" },
-            "HAL007": { name: "Kavita Rao", post: "Training Manager", dept: "Learning & Development" },
-            "HAL008": { name: "Deepak Nair", post: "HOD", dept: "Technical Training" },
-            "HAL009": { name: "Sanjay Gupta", post: "Deputy General Manager", dept: "Human Resources" },
-            "HAL010": { name: "Meera Iyer", post: "Legal Advisor", dept: "Legal & Compliance" },
-            "HAL011": { name: "Arun Kumar", post: "Manager", dept: "Industrial Relations" },
-            "HAL012": { name: "Sunita Reddy", post: "Administration Manager", dept: "General Administration" },
-            "HAL013": { name: "Ramesh Pillai", post: "Catering Officer", dept: "Canteen Services" },
-            "HAL014": { name: "Prakash Mehta", post: "General Manager", dept: "Production" },
-            "HAL015": { name: "Lakshmi Menon", post: "Manager", dept: "Industrial Engineering" },
-            "HAL016": { name: "Ashok Joshi", post: "Manager", dept: "Quality Control" },
-            "HAL017": { name: "Neha Agarwal", post: "HR Manager", dept: "Personnel" },
-            "HAL018": { name: "Vinod Kulkarni", post: "Senior Manager", dept: "Environment Management" },
-            "HAL019": { name: "Pooja Bhatt", post: "Environmental Engineer", dept: "EHS Department" },
-            "HAL020": { name: "Kiran Das", post: "Compliance Officer", dept: "Regulatory Affairs" },
-            "HAL021": { name: "Mahesh Varma", post: "Welfare Officer", dept: "Employee Welfare" },
-            "HAL022": { name: "Sneha Kapoor", post: "Sports Coordinator", dept: "Recreation Services" },
-            "HAL023": { name: "Anjali Saxena", post: "Presiding Officer", dept: "Human Resources" },
-            "HAL024": { name: "Ravi Shankar", post: "Senior Manager", dept: "Administration" },
-            "HAL025": { name: "Geeta Malhotra", post: "Legal Consultant", dept: "Legal Department" },
-            "HAL026": { name: "Sunil Chandra", post: "Chief Manager", dept: "Quality Assurance" },
-            "HAL027": { name: "Madhuri Sinha", post: "Production Manager", dept: "Manufacturing" },
-            "HAL028": { name: "Naveen Kumar", post: "Process Engineer", dept: "Industrial Engineering" },
-            
-            // Worker Employees
-            "HAL101": { name: "Mohan Yadav", post: "Senior Technician", dept: "Manufacturing" },
-            "HAL102": { name: "Ramesh Babu", post: "Worker Representative", dept: "Assembly Division" },
-            "HAL103": { name: "Suresh Patil", post: "Union Representative", dept: "Maintenance" },
-            "HAL104": { name: "Ganesh Naik", post: "Senior Worker", dept: "Fabrication" },
-            "HAL105": { name: "Shyam Prasad", post: "Worker Representative", dept: "Quality Assurance" },
-            "HAL106": { name: "Dinesh Rao", post: "Staff Representative", dept: "Administration" },
-            "HAL107": { name: "Prakash Tiwari", post: "Senior Technician", dept: "Engineering" },
-            "HAL108": { name: "Vijay Jha", post: "Skill Development Rep", dept: "Production" },
-            "HAL109": { name: "Raju Singh", post: "Union Secretary", dept: "Workers Union" },
-            "HAL110": { name: "Kishore Reddy", post: "Worker Representative", dept: "Paint Shop" },
-            "HAL111": { name: "Balu Swamy", post: "Staff Representative", dept: "Stores" },
-            "HAL112": { name: "Satish Kumar", post: "Worker Representative", dept: "Machine Shop" },
-            "HAL113": { name: "Anand Mishra", post: "Staff Representative", dept: "Design Office" },
-            "HAL114": { name: "Gopal Shetty", post: "Union Member", dept: "Heat Treatment" },
-            "HAL115": { name: "Ravi Pillai", post: "Senior Foreman", dept: "Assembly" },
-            "HAL116": { name: "Murali Krishna", post: "Union President", dept: "Workers Union" },
-            "HAL117": { name: "Anil Gupta", post: "Worker Representative", dept: "Tooling" },
-            "HAL118": { name: "Balaji Rao", post: "Worker Representative", dept: "Testing" },
-            "HAL119": { name: "Shankar Naidu", post: "Safety Representative", dept: "Electroplating" },
-            "HAL120": { name: "Venkat Raman", post: "Worker Representative", dept: "Chemical Processing" },
-            "HAL121": { name: "Harish Sharma", post: "Sports Representative", dept: "Foundry" },
-            "HAL122": { name: "Manoj Tiwari", post: "Worker Representative", dept: "Inspection" },
-            "HAL123": { name: "Sandeep Jain", post: "Staff Representative", dept: "IT Department" },
-            "HAL124": { name: "Rekha Nair", post: "Women Representative", dept: "Engineering Services" },
-            "HAL125": { name: "Savita Menon", post: "Staff Representative", dept: "Procurement" },
-            "HAL126": { name: "Ramakant Joshi", post: "Kaizen Representative", dept: "Sheet Metal" },
-            "HAL127": { name: "Subhash Desai", post: "Quality Circle Leader", dept: "Avionics" },
-            "HAL128": { name: "Yogesh Kulkarni", post: "Worker Representative", dept: "Composite Materials" }
-        };
-
+        // ========================================
+        // API CONFIGURATION
+        // ========================================
+        // TODO: Update this URL when you provide the backend details
+        const API_BASE_URL = 'http://127.0.0.1:8001';  // Your FastAPI backend URL
+        
+        // ========================================
+        // GLOBAL DATA STORAGE
+        // ========================================
+        let committees = [];  // Will be populated from API
+        let employeeDatabase = {};  // Will be populated from API
+        
         let currentEditingIndex = -1;
         let isLoggedIn = false; // This would be checked from session
 
-        // Initialize page
-        window.onload = function() {
+        // ========================================
+        // API FUNCTIONS - TO BE IMPLEMENTED
+        // ========================================
+        
+        /**
+         * Fetch all employees from backend
+         * Expected API endpoint: GET /api/employees
+         * Expected response: { employees: [{employee_id, employee_name, designation, department_name}] }
+         */
+        async function fetchEmployees() {
+            try {
+                const response = await fetch(`\${API_BASE_URL}/api/employees`);
+                if (!response.ok) throw new Error('Failed to fetch employees');
+                
+                const data = await response.json();
+                // Transform backend data to frontend format
+                employeeDatabase = {};
+                data.employees.forEach(emp => {
+                    employeeDatabase[emp.employee_id] = {
+                        name: emp.employee_name,
+                        post: emp.designation,
+                        dept: emp.department_name
+                    };
+                });
+                
+                console.log('Employees loaded:', Object.keys(employeeDatabase).length);
+                return employeeDatabase;
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+                alert('Failed to load employees from backend. Please check your connection.');
+                return {};
+            }
+        }
+        
+        /**
+         * Fetch all committees from backend
+         * Expected API endpoint: GET /api/committees
+         * Expected response: { committees: [{committee_id, committee_name, start_date, end_date, members: [...]}] }
+         */
+        async function fetchCommittees() {
+            try {
+                const response = await fetch(`\${API_BASE_URL}/api/committees`);
+                if (!response.ok) throw new Error('Failed to fetch committees');
+                
+                const data = await response.json();
+                // Transform backend data to frontend format
+                committees = data.committees.map(committee => {
+                    return {
+                        id: `HAL-COM-\${committee.committee_id}`,
+                        name: committee.committee_name,
+                        fromDate: committee.start_date,
+                        tillDate: committee.end_date,
+                        managementReps: committee.members
+                            .filter(m => m.member_type === 'Management')
+                            .map(m => ({
+                                post: m.role,
+                                dept: m.department_name || 'N/A',
+                                eid: m.employee_id.toString()
+                            })),
+                        workerReps: committee.members
+                            .filter(m => m.member_type === 'Working')
+                            .map(m => ({
+                                post: m.role,
+                                dept: m.department_name || 'N/A',
+                                eid: m.employee_id.toString()
+                            }))
+                    };
+                });
+                
+                console.log('Committees loaded:', committees.length);
+                return committees;
+            } catch (error) {
+                console.error('Error fetching committees:', error);
+                alert('Failed to load committees from backend. Please check your connection.');
+                return [];
+            }
+        }
+        
+        /**
+         * Create a new committee via API
+         * Expected API endpoint: POST /api/committee/create
+         * Request body: { committee_name, start_date, end_date, members: [{employee_id, role, member_type}] }
+         */
+        async function createCommitteeAPI(committeeData) {
+            try {
+                const response = await fetch(`\${API_BASE_URL}/api/committee/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(committeeData)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Failed to create committee');
+                }
+                
+                const result = await response.json();
+                console.log('Committee created:', result);
+                return result;
+            } catch (error) {
+                console.error('Error creating committee:', error);
+                throw error;
+            }
+        }
+
+        // ========================================
+        // INITIALIZE PAGE - LOAD DATA FROM BACKEND
+        // ========================================
+        window.onload = async function() {
+            // Fetch data from backend on page load
+            await fetchEmployees();
+            await fetchCommittees();
+            
             displayRecentCommittees();
             displayCommittees();
             
@@ -1352,9 +1257,9 @@
             }
 
             container.innerHTML = recentCommittees.map((committee, index) => `
-                <div class="recent-item" onclick="scrollToCommittee('${committee.id}')" style="animation-delay: ${index * 0.1}s;">
-                    <span class="recent-item-name">${committee.name}</span>
-                    <span class="recent-item-badge">${committee.id}</span>
+                <div class="recent-item" onclick="scrollToCommittee('\${committee.id}')" style="animation-delay: \${index * 0.1}s;">
+                    <span class="recent-item-name">\${committee.name}</span>
+                    <span class="recent-item-badge">\${committee.id}</span>
                 </div>
             `).join('');
         }
@@ -1383,22 +1288,22 @@
             container.innerHTML = committees.map(committee => `
                 <div class="committee-card">
                     <div class="committee-header">
-                        <div class="committee-title">${committee.name}</div>
-                        <div class="committee-id">ID: ${committee.id}</div>
+                        <div class="committee-title">\${committee.name}</div>
+                        <div class="committee-id">ID: \${committee.id}</div>
                     </div>
 
                     <div class="duration-section">
                         <div class="duration-item">
                             <span class="duration-label">From:</span>
-                            <span class="duration-value">${formatDate(committee.fromDate)}</span>
+                            <span class="duration-value">\${formatDate(committee.fromDate)}</span>
                         </div>
                         <div class="duration-item">
                             <span class="duration-label">Duration:</span>
-                            <span class="duration-value">${calculateDuration(committee.fromDate, committee.tillDate)}</span>
+                            <span class="duration-value">\${calculateDuration(committee.fromDate, committee.tillDate)}</span>
                         </div>
                         <div class="duration-item">
                             <span class="duration-label">Till Date:</span>
-                            <span class="duration-value">${formatDate(committee.tillDate)}</span>
+                            <span class="duration-value">\${formatDate(committee.tillDate)}</span>
                         </div>
                     </div>
 
@@ -1415,14 +1320,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${committee.managementReps.map(rep => {
+                                    \${committee.managementReps.map(rep => {
                                         const employee = employeeDatabase[rep.eid] || {};
                                         return `
                                         <tr>
-                                            <td>${employee.name || 'N/A'}</td>
-                                            <td>${rep.post}</td>
-                                            <td>${rep.dept}</td>
-                                            <td>${rep.eid}</td>
+                                            <td>\${employee.name || 'N/A'}</td>
+                                            <td>\${rep.post}</td>
+                                            <td>\${rep.dept}</td>
+                                            <td>\${rep.eid}</td>
                                         </tr>
                                     `;}).join('')}
                                 </tbody>
@@ -1441,14 +1346,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${committee.workerReps.map(rep => {
+                                    \${committee.workerReps.map(rep => {
                                         const employee = employeeDatabase[rep.eid] || {};
                                         return `
                                         <tr>
-                                            <td>${employee.name || 'N/A'}</td>
-                                            <td>${rep.post}</td>
-                                            <td>${rep.dept}</td>
-                                            <td>${rep.eid}</td>
+                                            <td>\${employee.name || 'N/A'}</td>
+                                            <td>\${rep.post}</td>
+                                            <td>\${rep.dept}</td>
+                                            <td>\${rep.eid}</td>
                                         </tr>
                                     `;}).join('')}
                                 </tbody>
@@ -1476,22 +1381,22 @@
             container.innerHTML = filteredCommittees.map(committee => `
                 <div class="committee-card">
                     <div class="committee-header">
-                        <div class="committee-title">${committee.name}</div>
-                        <div class="committee-id">ID: ${committee.id}</div>
+                        <div class="committee-title">\${committee.name}</div>
+                        <div class="committee-id">ID: \${committee.id}</div>
                     </div>
 
                     <div class="duration-section">
                         <div class="duration-item">
                             <span class="duration-label">From:</span>
-                            <span class="duration-value">${formatDate(committee.fromDate)}</span>
+                            <span class="duration-value">\${formatDate(committee.fromDate)}</span>
                         </div>
                         <div class="duration-item">
                             <span class="duration-label">Duration:</span>
-                            <span class="duration-value">${calculateDuration(committee.fromDate, committee.tillDate)}</span>
+                            <span class="duration-value">\${calculateDuration(committee.fromDate, committee.tillDate)}</span>
                         </div>
                         <div class="duration-item">
                             <span class="duration-label">Till Date:</span>
-                            <span class="duration-value">${formatDate(committee.tillDate)}</span>
+                            <span class="duration-value">\${formatDate(committee.tillDate)}</span>
                         </div>
                     </div>
 
@@ -1508,14 +1413,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${committee.managementReps.map(rep => {
+                                    \${committee.managementReps.map(rep => {
                                         const employee = employeeDatabase[rep.eid] || {};
                                         return `
                                         <tr>
-                                            <td>${employee.name || 'N/A'}</td>
-                                            <td>${rep.post}</td>
-                                            <td>${rep.dept}</td>
-                                            <td>${rep.eid}</td>
+                                            <td>\${employee.name || 'N/A'}</td>
+                                            <td>\${rep.post}</td>
+                                            <td>\${rep.dept}</td>
+                                            <td>\${rep.eid}</td>
                                         </tr>
                                     `;}).join('')}
                                 </tbody>
@@ -1534,14 +1439,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${committee.workerReps.map(rep => {
+                                    \${committee.workerReps.map(rep => {
                                         const employee = employeeDatabase[rep.eid] || {};
                                         return `
                                         <tr>
-                                            <td>${employee.name || 'N/A'}</td>
-                                            <td>${rep.post}</td>
-                                            <td>${rep.dept}</td>
-                                            <td>${rep.eid}</td>
+                                            <td>\${employee.name || 'N/A'}</td>
+                                            <td>\${rep.post}</td>
+                                            <td>\${rep.dept}</td>
+                                            <td>\${rep.eid}</td>
                                         </tr>
                                     `;}).join('')}
                                 </tbody>
@@ -1561,13 +1466,20 @@
             const from = new Date(fromDate);
             const till = new Date(tillDate);
             const months = (till.getFullYear() - from.getFullYear()) * 12 + (till.getMonth() - from.getMonth());
-            return `${months} months`;
+            return `\${months} months`;
         }
 
         function handleAddData() {
-            // Check if user is logged in (you would check session in real implementation)
-            // For now, redirect to login page
-            redirectToLogin();
+            // Check if user is logged in
+            const isLoggedIn = <%= isLoggedIn %>;
+            
+            if (isLoggedIn) {
+                // User is logged in, open the modal form
+                openModal();
+            } else {
+                // User not logged in, redirect to login page
+                redirectToLogin();
+            }
         }
 
         function redirectToLogin() {
@@ -1605,30 +1517,30 @@
             
             const repItem = document.createElement('div');
             repItem.className = 'rep-item';
-            repItem.id = `${type}-rep-${counter}`;
+            repItem.id = `\${type}-rep-\${counter}`;
             
             repItem.innerHTML = `
                 <div class="rep-item-header">
-                    <strong>${type === 'management' ? 'Management' : 'Worker'} Representative ${counter + 1}</strong>
-                    <button type="button" class="btn btn-remove btn-small" onclick="removeRepresentative('${type}', ${counter})">Remove</button>
+                    <strong>\${type === 'management' ? 'Management' : 'Worker'} Representative \${counter + 1}</strong>
+                    <button type="button" class="btn btn-remove btn-small" onclick="removeRepresentative('\${type}', \${counter})">Remove</button>
                 </div>
                 <div class="rep-inputs">
                     <div class="form-group">
                         <label>EID *</label>
-                        <input type="text" class="${type}-eid" data-index="${counter}" placeholder="Enter EID (e.g., HAL001)" 
-                               onblur="fetchEmployeeInfo('${type}', ${counter})" required>
+                        <input type="text" class="\${type}-eid" data-index="\${counter}" placeholder="Enter EID (e.g., HAL001)" 
+                               onblur="fetchEmployeeInfo('\${type}', \${counter})" required>
                     </div>
                     <div class="form-group">
                         <label>Name</label>
-                        <input type="text" class="${type}-name" data-index="${counter}" readonly style="background: #f0f0f0;">
+                        <input type="text" class="\${type}-name" data-index="\${counter}" readonly style="background: #f0f0f0;">
                     </div>
                     <div class="form-group">
                         <label>Post</label>
-                        <input type="text" class="${type}-post" data-index="${counter}" readonly style="background: #f0f0f0;">
+                        <input type="text" class="\${type}-post" data-index="\${counter}" readonly style="background: #f0f0f0;">
                     </div>
                     <div class="form-group">
                         <label>Department</label>
-                        <input type="text" class="${type}-dept" data-index="${counter}" readonly style="background: #f0f0f0;">
+                        <input type="text" class="\${type}-dept" data-index="\${counter}" readonly style="background: #f0f0f0;">
                     </div>
                 </div>
             `;
@@ -1637,10 +1549,10 @@
         }
 
         function fetchEmployeeInfo(type, index) {
-            const eidInput = document.querySelector(`.${type}-eid[data-index="${index}"]`);
-            const nameInput = document.querySelector(`.${type}-name[data-index="${index}"]`);
-            const postInput = document.querySelector(`.${type}-post[data-index="${index}"]`);
-            const deptInput = document.querySelector(`.${type}-dept[data-index="${index}"]`);
+            const eidInput = document.querySelector(`.\${type}-eid[data-index="\${index}"]`);
+            const nameInput = document.querySelector(`.\${type}-name[data-index="\${index}"]`);
+            const postInput = document.querySelector(`.\${type}-post[data-index="\${index}"]`);
+            const deptInput = document.querySelector(`.\${type}-dept[data-index="\${index}"]`);
             
             const eid = eidInput.value.trim().toUpperCase();
             
@@ -1663,7 +1575,7 @@
                 eidInput.style.borderColor = '#d32f2f';
                 eidInput.style.background = '#ffebee';
                 
-                alert(`Employee with EID "${eid}" not found in database.\n\nAvailable EIDs: HAL001-HAL028 (Management), HAL101-HAL128 (Workers)`);
+                alert(`Employee with EID "\${eid}" not found in database.\n\nAvailable EIDs: HAL001-HAL028 (Management), HAL101-HAL128 (Workers)`);
             } else {
                 // Reset fields if EID is empty
                 nameInput.value = '';
@@ -1675,7 +1587,7 @@
         }
 
         function removeRepresentative(type, index) {
-            const element = document.getElementById(`${type}-rep-${index}`);
+            const element = document.getElementById(`\${type}-rep-\${index}`);
             if (element) {
                 element.remove();
             }
@@ -1700,7 +1612,7 @@
             alert('Committee data saved! You can continue editing or submit.');
         }
 
-        function submitCommittee() {
+        async function submitCommittee() {
             if (!validateForm()) {
                 alert('Please fill all required fields!');
                 return;
@@ -1708,25 +1620,57 @@
 
             const committeeData = getFormData();
             
-            if (currentEditingIndex === -1) {
-                committees.push(committeeData);
-            } else {
-                committees[currentEditingIndex] = committeeData;
-            }
+            try {
+                if (currentEditingIndex === -1) {
+                    // Create new committee via API
+                    // Map management reps to committee roles: 1st=Chairman, 2nd=Secretary, rest=Member
+                    const managementMembers = committeeData.managementReps.map((rep, index) => ({
+                        employee_id: rep.eid,
+                        role: index === 0 ? 'Chairman' : index === 1 ? 'Secretary' : 'Member',
+                        member_type: 'Management'
+                    }));
+                    
+                    // All worker reps are Members
+                    const workerMembers = committeeData.workerReps.map(rep => ({
+                        employee_id: rep.eid,
+                        role: 'Member',
+                        member_type: 'Working'
+                    }));
+                    
+                    const apiData = {
+                        committee_name: committeeData.name,
+                        start_date: committeeData.fromDate,
+                        end_date: committeeData.tillDate,
+                        members: [...managementMembers, ...workerMembers]
+                    };
+                    
+                    await createCommitteeAPI(apiData);
+                    alert('Committee created successfully!');
+                    
+                    // Reload committees from API
+                    await fetchCommittees();
+                } else {
+                    // Update existing committee (local only for now)
+                    committees[currentEditingIndex] = committeeData;
+                    alert('Committee updated successfully!');
+                    // TODO: Implement API update endpoint
+                }
 
-            displayRecentCommittees();
-            displayCommittees();
-            closeModal();
-            
-            // Hide edit button after submit (in real app, you'd update the UI accordingly)
-            document.getElementById('saveBtn').classList.add('hidden');
-            
-            alert('Committee data submitted successfully!');
-            
-            // Reset for next time
-            setTimeout(() => {
-                document.getElementById('saveBtn').classList.remove('hidden');
-            }, 100);
+                displayRecentCommittees();
+                displayCommittees();
+                closeModal();
+                
+                // Hide edit button after submit
+                document.getElementById('saveBtn').classList.add('hidden');
+                
+                // Reset for next time
+                setTimeout(() => {
+                    document.getElementById('saveBtn').classList.remove('hidden');
+                }, 100);
+            } catch (error) {
+                alert('Error saving committee: ' + error.message);
+                console.error('Submit error:', error);
+            }
         }
 
         function validateForm() {
