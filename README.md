@@ -180,6 +180,85 @@ sudo nano /opt/tomcat/webapps/hal-committee/WEB-INF/web.xml
 # Paste the web.xml content shown above
 ```
 
+### Step 4.5: Install and Start Backend API (Python/FastAPI)
+
+The application uses a FastAPI backend for data operations. Follow these steps to set it up:
+
+#### 1. Install Python Dependencies
+```bash
+# Navigate to backend directory
+cd backend
+
+# Install required packages
+pip install -r requirements.txt
+
+# This will install:
+# - fastapi
+# - uvicorn[standard]
+# - pydantic
+```
+
+#### 2. Verify Database Exists
+```bash
+# Check if company.db exists in backend folder
+ls company.db  # Linux/Mac
+dir company.db # Windows
+```
+
+The database contains:
+- `employees` table (20 employees)
+- `committee` table (committees data)
+- `committee_member` table (member assignments with roles)
+- `hr_login` table (authentication credentials)
+
+#### 3. Start Backend Server
+```bash
+# Make sure you're in the backend directory
+cd backend
+
+# Start FastAPI server
+python -m uvicorn main:app --host 127.0.0.1 --port 8001 --reload
+```
+
+**Expected Output:**
+```
+INFO:     Will watch for changes in these directories: ['C:\\path\\to\\HAL-Internship\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
+INFO:     Started reloader process [XXXX] using StatReload
+INFO:     Started server process [XXXX]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+```
+
+**⚠️ Keep this terminal running!** The backend must be active for the frontend to work.
+
+#### 4. Test Backend API
+Open a new terminal and test the API:
+```bash
+# Test employees endpoint
+curl http://127.0.0.1:8001/api/employees
+
+# Test committees endpoint
+curl http://127.0.0.1:8001/api/committees
+
+# Or open in browser:
+# http://127.0.0.1:8001/api/employees
+```
+
+#### API Endpoints:
+- `GET /` - Welcome message
+- `GET /api/employees` - Get all employees
+- `GET /api/employees/{id}` - Get specific employee
+- `POST /api/hr/login` - Authenticate user
+- `POST /api/committee/create` - Create committee
+- `GET /api/committees` - Get all committees
+
+**Backend Configuration:**
+- **Host:** 127.0.0.1
+- **Port:** 8001
+- **CORS:** Allows http://localhost:8080 and http://127.0.0.1:8080
+- **Auto-reload:** Yes (changes auto-apply)
+
 ### Step 5: Start Tomcat Server
 
 #### Windows:
@@ -213,23 +292,33 @@ tail -f /opt/tomcat/logs/catalina.out
 
 ### Step 6: Access the Application
 
+**Important:** Make sure BOTH servers are running:
+- ✅ Backend API on port 8001 (Python/FastAPI)
+- ✅ Tomcat server on port 8080 (JSP)
+
 1. **Open your web browser**
-2. **Verify Tomcat is running:**
+2. **Verify Backend is running:**
+   ```
+   http://127.0.0.1:8001/api/employees
+   ```
+   You should see employee data in JSON format.
+
+3. **Verify Tomcat is running:**
    ```
    http://localhost:8080
    ```
    You should see the Tomcat welcome page.
 
-3. **Access the application:**
+4. **Access the application:**
    ```
    http://localhost:8080/hal-committee/login.jsp
    ```
 
-4. **Login with default credentials:**
-   - **Username:** `admin`
+5. **Login with default credentials:**
+   - **Username:** `hr_admin`
    - **Password:** `admin123`
 
-5. **After successful login, you'll be redirected to:**
+6. **After successful login, you'll be redirected to:**
    ```
    http://localhost:8080/hal-committee/committee-view.jsp
    ```

@@ -417,7 +417,7 @@
             margin-bottom: 35px;
             margin-top: 130px;
             position: relative;
-            z-index: 1;
+            z-index: 998;
         }
 
         .search-box input {
@@ -1304,7 +1304,18 @@
             const allCards = document.querySelectorAll('.committee-card');
             allCards.forEach(card => {
                 if (card.querySelector('.committee-id').textContent.includes(committeeId)) {
-                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Calculate offset to account for sticky header and search box
+                    const headerHeight = document.querySelector('.header').offsetHeight;
+                    const searchBoxHeight = document.querySelector('.search-box').offsetHeight;
+                    const offset = headerHeight + searchBoxHeight + 40; // 40px extra padding
+                    
+                    const cardPosition = card.getBoundingClientRect().top + window.pageYOffset - offset;
+                    
+                    window.scrollTo({
+                        top: cardPosition,
+                        behavior: 'smooth'
+                    });
+                    
                     card.style.animation = 'highlightCard 1s ease';
                     setTimeout(() => {
                         card.style.animation = '';
