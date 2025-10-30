@@ -298,7 +298,15 @@
             margin-bottom: 35px;
             flex-wrap: wrap;
             gap: 20px;
-            position: relative;
+            position: sticky;
+            top: 20px;
+            background: linear-gradient(135deg, #e8eef3 0%, #f5f8fa 100%);
+            padding: 20px 0;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            margin-top: -65px;
         }
 
         .header h1 {
@@ -321,6 +329,7 @@
         .header-buttons {
             display: flex;
             gap: 15px;
+            align-items: center;
         }
 
         .btn {
@@ -361,21 +370,31 @@
             background: var(--dark-gray);
             color: white;
             border: 2px solid transparent;
-            box-shadow: 0 4px 12px rgba(55, 71, 79, 0.2);
+            box-shadow: 0 4px 16px rgba(55, 71, 79, 0.3);
+            font-size: 16px;
+            padding: 14px 32px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn-login:hover {
             background: #263238;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(55, 71, 79, 0.3);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 24px rgba(55, 71, 79, 0.4);
         }
 
         .btn-add {
             background: var(--primary-blue);
             color: white;
             border: 2px solid transparent;
-            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+            box-shadow: 0 4px 16px rgba(25, 118, 210, 0.3);
             animation: pulse 2s infinite;
+            font-size: 16px;
+            padding: 14px 32px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         @keyframes pulse {
@@ -396,7 +415,9 @@
 
         .search-box {
             margin-bottom: 35px;
+            margin-top: 130px;
             position: relative;
+            z-index: 1;
         }
 
         .search-box input {
@@ -1115,7 +1136,7 @@
         let employeeDatabase = {};  // Will be populated from API
         
         let currentEditingIndex = -1;
-        let isLoggedIn = false; // This would be checked from session
+        let isLoggedIn = <%= isLoggedIn %>; // Get login state from JSP session
 
         // ========================================
         // API FUNCTIONS - TO BE IMPLEMENTED
@@ -1235,10 +1256,9 @@
             displayRecentCommittees();
             displayCommittees();
             
-            // Check if user just logged in
+            // Check if user just logged in and open modal
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('loggedIn') === 'true') {
-                isLoggedIn = true;
+            if (urlParams.get('loggedIn') === 'true' && isLoggedIn) {
                 openModal();
                 // Clean URL
                 window.history.replaceState({}, document.title, window.location.pathname);
@@ -1285,83 +1305,88 @@
                 return;
             }
 
-            container.innerHTML = committees.map(committee => `
-                <div class="committee-card">
-                    <div class="committee-header">
-                        <div class="committee-title">\${committee.name}</div>
-                        <div class="committee-id">ID: \${committee.id}</div>
-                    </div>
+            try {
+                container.innerHTML = committees.map(committee => `
+                    <div class="committee-card">
+                        <div class="committee-header">
+                            <div class="committee-title">\${committee.name || 'Unnamed Committee'}</div>
+                            <div class="committee-id">ID: \${committee.id || 'N/A'}</div>
+                        </div>
 
-                    <div class="duration-section">
-                        <div class="duration-item">
-                            <span class="duration-label">From:</span>
-                            <span class="duration-value">\${formatDate(committee.fromDate)}</span>
+                        <div class="duration-section">
+                            <div class="duration-item">
+                                <span class="duration-label">From:</span>
+                                <span class="duration-value">\${formatDate(committee.fromDate)}</span>
+                            </div>
+                            <div class="duration-item">
+                                <span class="duration-label">Duration:</span>
+                                <span class="duration-value">\${calculateDuration(committee.fromDate, committee.tillDate)}</span>
+                            </div>
+                            <div class="duration-item">
+                                <span class="duration-label">Till Date:</span>
+                                <span class="duration-value">\${formatDate(committee.tillDate)}</span>
+                            </div>
                         </div>
-                        <div class="duration-item">
-                            <span class="duration-label">Duration:</span>
-                            <span class="duration-value">\${calculateDuration(committee.fromDate, committee.tillDate)}</span>
-                        </div>
-                        <div class="duration-item">
-                            <span class="duration-label">Till Date:</span>
-                            <span class="duration-value">\${formatDate(committee.tillDate)}</span>
-                        </div>
-                    </div>
 
-                    <div class="representatives-section">
-                        <div class="rep-group">
-                            <h3>Management Representatives</h3>
-                            <table class="rep-table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Post</th>
-                                        <th>Dept</th>
-                                        <th>EID</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    \${committee.managementReps.map(rep => {
-                                        const employee = employeeDatabase[rep.eid] || {};
-                                        return `
+                        <div class="representatives-section">
+                            <div class="rep-group">
+                                <h3>Management Representatives</h3>
+                                <table class="rep-table">
+                                    <thead>
                                         <tr>
-                                            <td>\${employee.name || 'N/A'}</td>
-                                            <td>\${rep.post}</td>
-                                            <td>\${rep.dept}</td>
-                                            <td>\${rep.eid}</td>
+                                            <th>Name</th>
+                                            <th>Post</th>
+                                            <th>Dept</th>
+                                            <th>EID</th>
                                         </tr>
-                                    `;}).join('')}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        \${(committee.managementReps || []).map(rep => {
+                                            const employee = employeeDatabase[rep.eid] || {};
+                                            return `
+                                            <tr>
+                                                <td>\${employee.name || 'N/A'}</td>
+                                                <td>\${rep.post || 'N/A'}</td>
+                                                <td>\${rep.dept || 'N/A'}</td>
+                                                <td>\${rep.eid || 'N/A'}</td>
+                                            </tr>
+                                        `;}).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
 
-                        <div class="rep-group">
-                            <h3>Worker Representatives</h3>
-                            <table class="rep-table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Post</th>
-                                        <th>Dept</th>
-                                        <th>EID</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    \${committee.workerReps.map(rep => {
-                                        const employee = employeeDatabase[rep.eid] || {};
-                                        return `
+                            <div class="rep-group">
+                                <h3>Worker Representatives</h3>
+                                <table class="rep-table">
+                                    <thead>
                                         <tr>
-                                            <td>\${employee.name || 'N/A'}</td>
-                                            <td>\${rep.post}</td>
-                                            <td>\${rep.dept}</td>
-                                            <td>\${rep.eid}</td>
+                                            <th>Name</th>
+                                            <th>Post</th>
+                                            <th>Dept</th>
+                                            <th>EID</th>
                                         </tr>
-                                    `;}).join('')}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        \${(committee.workerReps || []).map(rep => {
+                                            const employee = employeeDatabase[rep.eid] || {};
+                                            return `
+                                            <tr>
+                                                <td>\${employee.name || 'N/A'}</td>
+                                                <td>\${rep.post || 'N/A'}</td>
+                                                <td>\${rep.dept || 'N/A'}</td>
+                                                <td>\${rep.eid || 'N/A'}</td>
+                                            </tr>
+                                        `;}).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            } catch (error) {
+                console.error('Error displaying committees:', error);
+                container.innerHTML = '<div class="no-data" style="color: red;">Error displaying committees. Please refresh the page.</div>';
+            }
         }
 
         function searchCommittees() {
