@@ -44,6 +44,13 @@ if %errorlevel% equ 0 (
     echo [FAIL] logout.jsp
 )
 
+copy /Y "%SOURCE_PATH%\login-utils.js" "%WEBAPP_PATH%\" >nul 2>&1
+if %errorlevel% equ 0 (
+    echo [OK] login-utils.js
+) else (
+    echo [FAIL] login-utils.js
+)
+
 echo.
 echo ====================================
 echo   Deployment Complete!

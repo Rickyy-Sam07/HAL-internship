@@ -267,30 +267,6 @@
             }
         }
 
-        /* Decorative corner elements */
-        .container::before,
-        .container::after {
-            content: '';
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            opacity: 0.05;
-            pointer-events: none;
-        }
-
-        .container::before {
-            background: var(--primary-blue);
-            top: -100px;
-            right: -100px;
-        }
-
-        .container::after {
-            background: var(--accent-blue);
-            bottom: -100px;
-            left: -100px;
-        }
-
         .header {
             display: flex;
             justify-content: space-between;
@@ -1135,24 +1111,17 @@
     </div>
 
     <script>
-        // ========================================
         // API CONFIGURATION
-        // ========================================
-        // TODO: Update this URL when you provide the backend details
-        const API_BASE_URL = 'http://127.0.0.1:8001';  // Your FastAPI backend URL
+        const API_BASE_URL = 'http://127.0.0.1:8001';
         
-        // ========================================
         // GLOBAL DATA STORAGE
-        // ========================================
-        let committees = [];  // Will be populated from API
-        let employeeDatabase = {};  // Will be populated from API
+        let committees = [];
+        let employeeDatabase = {};
         
         let currentEditingIndex = -1;
-        let isLoggedIn = <%= isLoggedIn %>; // Get login state from JSP session
+        let isLoggedIn = <%= isLoggedIn %>;
 
-        // ========================================
-        // API FUNCTIONS - TO BE IMPLEMENTED
-        // ========================================
+        // API FUNCTIONS
         
         /**
          * Fetch all employees from backend
@@ -1530,14 +1499,9 @@
         }
 
         function handleAddData() {
-            // Check if user is logged in
-            const isLoggedIn = <%= isLoggedIn %>;
-            
             if (isLoggedIn) {
-                // User is logged in, open the modal form
                 openModal();
             } else {
-                // User not logged in, redirect to login page
                 redirectToLogin();
             }
         }
