@@ -12,7 +12,7 @@ cursor = conn.cursor()
 print("Starting database migration...")
 
 # Step 1: Create a new table with the updated schema
-print("Creating new committee_member table with updated schema...")
+print( b"Creating new committee_member table with updated schema...")
 cursor.execute("""
 CREATE TABLE committee_member_new (
     committee_member_id INTEGER PRIMARY KEY,

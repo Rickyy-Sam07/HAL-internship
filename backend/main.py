@@ -1,29 +1,95 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from pathlib import Path
 import sqlite3
 
 app = FastAPI(title="Employee & Committee Management API")
 
-# Add CORS middleware to allow frontend (Tomcat on port 8080) to access backend
+# Get the parent directory (project root)
+BASE_DIR = Path(__file__).resolve().parent.parent
+DB_PATH = Path(__file__).resolve().parent / "company.db"  # Database is in backend folder
+print(f"BASE_DIR: {BASE_DIR}")
+print(f"DB_PATH: {DB_PATH}")
+print(f"Current working directory: {Path.cwd()}")
+print(f"Files in BASE_DIR: {list(BASE_DIR.glob('*.html'))}")
+
+# Add CORS middleware to allow frontend access from various development servers
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080", "http://127.0.0.1:8080"],  # Tomcat frontend
+    allow_origins=[
+        "http://localhost:8080",
+        "http://127.0.0.1:8080",
+        "http://localhost:8001",  # FastAPI server itself
+        "http://127.0.0.1:8001",
+        "http://localhost:5500",  # VS Code Live Server
+        "http://127.0.0.1:5500",  # VS Code Live Server
+        "http://localhost:3000",  # Common dev port
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",  # Vite default
+        "http://127.0.0.1:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
 )
 
+# Mount static directories
+app.mount("/styles", StaticFiles(directory=str(BASE_DIR / "styles")), name="styles")
+app.mount("/js", StaticFiles(directory=str(BASE_DIR / "js")), name="js")
+
 # Function to connect to the SQLite DB
 def get_db_connection():
-    conn = sqlite3.connect("company.db")
+    conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row  # allows column names in JSON
     return conn
 
 
-# ---------- Root ----------
+# ---------- HTML Routes ----------
 @app.get("/")
-def home():
+def serve_index():
+    """Serve the committee view page as homepage"""
+    return FileResponse(str(BASE_DIR / "committee-view.html"))
+
+
+@app.get("/index.html")
+def serve_index_explicit():
+    """Serve the login page (explicit path)"""
+    return FileResponse(str(BASE_DIR / "index.html"))
+
+
+@app.get("/login.html")
+def serve_login():
+    """Serve the login page"""
+    return FileResponse(str(BASE_DIR / "index.html"))
+
+
+@app.get("/committee-view.html")
+def serve_committee_view():
+    """Serve the committee management page"""
+    return FileResponse(str(BASE_DIR / "committee-view.html"))
+
+
+@app.get("/add-committee.html")
+def serve_add_committee():
+    """Serve the add committee page"""
+    # Try backend directory first, then parent directory
+    backend_path = Path(__file__).parent / "add-committee.html"
+    parent_path = BASE_DIR / "add-committee.html"
+    
+    if backend_path.exists():
+        return FileResponse(str(backend_path))
+    elif parent_path.exists():
+        return FileResponse(str(parent_path))
+    else:
+        raise HTTPException(status_code=404, detail="add-committee.html not found")
+
+
+# ---------- API Root ----------
+@app.get("/api")
+def api_home():
     return {"message": "Welcome to the Employee & Committee Management API"}
 
 
@@ -147,3 +213,7 @@ def get_committees():
 
     conn.close()
     return {"committees": result}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="127.0.0.1", port=8001, reload=True)
