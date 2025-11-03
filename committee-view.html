@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Committee Management System</title>
+    <link rel="stylesheet" href="styles/committee.css">
+</head>
+<body>
+    <!-- Top Header with Logo -->
+    <div class="top-header">
+        <div class="top-header-content">
+            <div class="logo-container">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Hindustan_Aeronautics_Limited_Logo.svg/1200px-Hindustan_Aeronautics_Limited_Logo.svg.png"
+                     alt="HAL Logo" class="hal-logo">
+                <div class="logo-text">
+                    <h1>Hindustan Aeronautics Limited</h1>
+                    <p>Committee Management System</p>
+                </div>
+            </div>
+            
+            <!-- User Profile Section (shown when logged in) -->
+            <div class="user-profile" id="userProfile" style="display: none;">
+                <div class="user-avatar" id="userAvatar"></div>
+                <div class="user-info">
+                    <span class="user-name" id="userName"></span>
+                    <span class="user-role" id="userRole"></span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>Committee Management Portal</h1>
+                <div class="header-buttons">
+                    <button class="btn" id="actionButton"></button>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by committee name or ID..." onkeyup="searchCommittees()">
+            </div>
+
+            <!-- Recent Committees Section -->
+            <div class="recent-section">
+                <h2>Recently Added Committees</h2>
+                <div class="recent-committees" id="recentCommittees">
+                    <!-- Recent committees will be displayed here -->
+                </div>
+            </div>
+
+            <div id="committeeList">
+                <!-- Committees will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="js/committee.js"></script>
+</body>
+</html>

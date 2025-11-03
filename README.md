@@ -1,53 +1,61 @@
 # HAL Committee Management System
 
-A professional full-stack web application for managing committees, members, and employee data for Hindustan Aeronautics Limited (HAL), built with JSP, HTML5, CSS3, and JavaScript.
+A professional full-stack web application for managing committees, members, and employee data for Hindustan Aeronautics Limited (HAL), built with HTML5, CSS3, JavaScript, and FastAPI.
 
 ## 🎯 Project Overview
 
-This is a complete committee management system that provides secure access to committee information with server-side authentication using JSP sessions.
+This is a complete committee management system with a modern single-server architecture where FastAPI serves both the frontend (HTML/CSS/JS) and backend API.
 
 ### ✨ Key Features
 
-- ✅ **Secure Login System** - Server-side authentication with JSP sessions
+- ✅ **Secure Login System** - Client-side authentication with localStorage sessions
 - ✅ **Committee Management** - Add, view, search, and filter committees
-- ✅ **Employee Database** - 65+ employees with auto-fetch by EID
+- ✅ **Employee Database** - 20+ employees with auto-fetch by EID
 - ✅ **User Profile Display** - Shows logged-in user in header
-- ✅ **Session Management** - Proper logout with session invalidation
+- ✅ **Session Management** - Proper logout with session clearing
 - ✅ **Beautiful UI** - Glassmorphism design with smooth animations
 - ✅ **Responsive Layout** - Works on all screen sizes
 - ✅ **Guest/Admin Modes** - Different access levels based on authentication
+- ✅ **Single Server** - FastAPI serves both frontend and backend
+- ✅ **Auto-reload** - Development mode with hot reload
 
 ## 🏗️ Architecture
 
 ```
-Frontend: JSP (JavaServer Pages) with embedded JavaScript/CSS
-Application Server: Apache Tomcat 9.0
-Backend API: FastAPI (Python)
+Frontend: HTML5 + CSS3 + JavaScript (ES6+)
+Server: FastAPI (Python) - serves static files + API
 Database: SQLite
+Session: localStorage (client-side)
+API: RESTful with automatic documentation
 ```
 
 ## 📋 Prerequisites
 
 Before running this project, you need:
 
-1. **Java Development Kit (JDK) 8 or higher**
-2. **Apache Tomcat 9.0 or higher**
-3. **Python 3.7+** (for backend API)
-4. **Web Browser** (Chrome, Firefox, Edge)
+1. **Python 3.7+** (for FastAPI server and backend)
+2. **Web Browser** (Chrome, Firefox, Edge)
 
-## 🚀 Step-by-Step Setup Guide
+**That's it!** No need for Java, Tomcat, or separate web servers.
 
-### Step 1: Install Java JDK
+## 🚀 Quick Start (Single Command!)
 
-#### Windows:
-1. Download JDK from: https://www.oracle.com/java/technologies/downloads/
-2. Run the installer and follow instructions
-3. **Set JAVA_HOME environment variable:**
-   - Right-click "This PC" → Properties → Advanced system settings → Environment Variables
-   - Under System Variables, click "New"
-   - Variable name: `JAVA_HOME`
-   - Variable value: `C:\Program Files\Java\jdk-17` (your JDK path)
-4. **Verify installation:**
+### Windows:
+```powershell
+.\start-server.ps1
+```
+
+### Manual Start:
+```powershell
+cd backend
+python -m uvicorn main:app --host 127.0.0.1 --port 8001 --reload
+```
+
+Then open your browser to:
+- **Login Page**: http://127.0.0.1:8001/
+- **API Docs**: http://127.0.0.1:8001/docs
+
+## 🔑 Test Credentials
    ```cmd
    java -version
    ```

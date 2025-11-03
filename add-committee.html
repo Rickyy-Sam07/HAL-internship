@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Committee - HAL</title>
+    <link rel="stylesheet" href="styles/add-committee.css">
+</head>
+<body>
+    <!-- Top Header with Logo -->
+    <div class="top-header">
+        <div class="top-header-content">
+            <div class="logo-container">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3e/Hindustan_Aeronautics_Limited_Logo.svg/1200px-Hindustan_Aeronautics_Limited_Logo.svg.png"
+                     alt="HAL Logo" class="hal-logo">
+                <div class="logo-text">
+                    <h1>Hindustan Aeronautics Limited</h1>
+                    <p>Committee Management System</p>
+                </div>
+            </div>
+            
+            <!-- User Profile Section -->
+            <div class="user-profile" id="userProfile" style="display: none;">
+                <div class="user-avatar" id="userAvatar"></div>
+                <div class="user-info">
+                    <span class="user-name" id="userName"></span>
+                    <span class="user-role" id="userRole"></span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-wrapper">
+        <div class="container">
+            <!-- Header with Back Button -->
+            <div class="header">
+                <button class="btn-back" onclick="window.location.href='committee-view.html'">
+                    ← Back to Dashboard
+                </button>
+                <h1>Add New Committee</h1>
+            </div>
+
+            <!-- Committee Info Section -->
+            <div class="form-section">
+                <h2>Committee Information</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="committeeId">Committee ID *</label>
+                        <input type="text" id="committeeId" readonly placeholder="Will be auto-generated as HAL-COM-XXXX" class="readonly-field">
+                        <small>Format: HAL-COM-XXXX (assigned automatically after creation)</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="committeeName">Committee Name *</label>
+                        <input type="text" id="committeeName" placeholder="e.g., Works Committee 2025" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fromDate">Start Date *</label>
+                        <input type="date" id="fromDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tillDate">End Date *</label>
+                        <input type="date" id="tillDate" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Representatives Forms Section (Side by Side) -->
+            <div class="forms-container">
+                <!-- Management Representatives Form -->
+                <div class="form-section half-width">
+                    <div class="section-header">
+                        <h2>Management Representatives</h2>
+                        <span class="role-info">1 Chairman & 1 Secretary total (both categories)</span>
+                    </div>
+                    
+                    <div class="add-member-form" id="managementForm">
+                        <div class="form-grid-vertical">
+                            <div class="form-group">
+                                <label>EID *</label>
+                                <input type="text" id="mgmt-eid" placeholder="1" onblur="fetchEmployeeInfo('management')">
+                            </div>
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" id="mgmt-name" readonly class="readonly-field">
+                            </div>
+                            <div class="form-group">
+                                <label>Post</label>
+                                <input type="text" id="mgmt-post" readonly class="readonly-field">
+                            </div>
+                            <div class="form-group">
+                                <label>Department</label>
+                                <input type="text" id="mgmt-dept" readonly class="readonly-field">
+                            </div>
+                            <div class="form-group">
+                                <label>Role *</label>
+                                <select id="mgmt-role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="Chairman">Chairman</option>
+                                    <option value="Secretary">Secretary</option>
+                                    <option value="Member">Member</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn-add-member" onclick="addMember('management')">
+                                    + Add Management Rep
+                                </button>
+                            </div>
+                        </div>
+                        <div id="mgmt-error" class="error-message"></div>
+                    </div>
+                </div>
+
+                <!-- Worker Representatives Form -->
+                <div class="form-section half-width">
+                    <div class="section-header">
+                        <h2>Worker Representatives</h2>
+                        <span class="role-info">1 Chairman & 1 Secretary total (both categories)</span>
+                    </div>
+                    
+                    <div class="add-member-form" id="workerForm">
+                        <div class="form-grid-vertical">
+                            <div class="form-group">
+                                <label>EID *</label>
+                                <input type="text" id="worker-eid" placeholder="15" onblur="fetchEmployeeInfo('worker')">
+                            </div>
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" id="worker-name" readonly class="readonly-field">
+                            </div>
+                            <div class="form-group">
+                                <label>Post</label>
+                                <input type="text" id="worker-post" readonly class="readonly-field">
+                            </div>
+                            <div class="form-group">
+                                <label>Department</label>
+                                <input type="text" id="worker-dept" readonly class="readonly-field">
+                            </div>
+                            <div class="form-group">
+                                <label>Role *</label>
+                                <select id="worker-role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="Chairman">Chairman</option>
+                                    <option value="Secretary">Secretary</option>
+                                    <option value="Member">Member</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn-add-member" onclick="addMember('worker')">
+                                    + Add Worker Rep
+                                </button>
+                            </div>
+                        </div>
+                        <div id="worker-error" class="error-message"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Tables Section (Side by Side) -->
+            <div class="tables-container">
+                <!-- Management Representatives Table -->
+                <div class="preview-table-container half-width">
+                    <h3>Management Representatives List</h3>
+                    <table class="preview-table" id="managementTable">
+                        <thead>
+                            <tr>
+                                <th>EID</th>
+                                <th>Name</th>
+                                <th>Post</th>
+                                <th>Department</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="managementTableBody">
+                            <tr class="empty-row">
+                                <td colspan="6">No management representatives added yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Worker Representatives Table -->
+                <div class="preview-table-container half-width">
+                    <h3>Worker Representatives List</h3>
+                    <table class="preview-table" id="workerTable">
+                        <thead>
+                            <tr>
+                                <th>EID</th>
+                                <th>Name</th>
+                                <th>Post</th>
+                                <th>Department</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workerTableBody">
+                            <tr class="empty-row">
+                                <td colspan="6">No worker representatives added yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="window.location.href='committee-view.html'">
+                    Cancel
+                </button>
+                <button type="button" class="btn-submit" onclick="submitCommittee()">
+                    Create Committee
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/add-committee.js"></script>
+</body>
+</html>
